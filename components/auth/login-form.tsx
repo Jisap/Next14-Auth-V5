@@ -15,6 +15,8 @@ import * as z from "zod";
 import { LoginSchema } from "@/schemas";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { FormError } from "../form-error";
+import { FormSuccess } from "../form-success";
 
 
 export const LoginForm = () => {
@@ -80,6 +82,8 @@ export const LoginForm = () => {
               )}
             />
           </div>
+          <FormError message="Invalid credentials!"/>
+          <FormSuccess message="Email sent!" />
           <Button
             type="submit"
             className="w-full"
