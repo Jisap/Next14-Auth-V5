@@ -82,8 +82,8 @@ export const LoginForm = () => {
               )}
             />
           </div>
-          <FormError message="Invalid credentials!"/>
-          <FormSuccess message="Email sent!" />
+          <FormError message=""/>
+          <FormSuccess message="" />
           <Button
             type="submit"
             className="w-full"
