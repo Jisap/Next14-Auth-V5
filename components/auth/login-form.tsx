@@ -17,9 +17,15 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
+import { login } from "@/actions/login";
+import { useState, useTransition } from "react";
 
 
 export const LoginForm = () => {
+
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string |undefined>("")
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof LoginSchema>>({ // Se utiliza useForm de react-hook-form para inicializar el formulario. 
     resolver: zodResolver(LoginSchema),               // Se proporciona el esquema de validación (LoginSchema) 
@@ -30,7 +36,16 @@ export const LoginForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    console.log(values)
+    setError("");
+    setSuccess("");
+
+    startTransition(() => {
+      login(values)
+        .then((data) => {
+          setError(data.error)
+          setSuccess(data.success)
+        })
+    })
   };
 
   return (
@@ -56,6 +71,7 @@ export const LoginForm = () => {
                   <FormControl>
                     <Input 
                       {...field}
+                      disabled={isPending}
                       placeholder="email@example.com"
                       type="email"
                     />
@@ -73,6 +89,7 @@ export const LoginForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="*******"
                       type="password"
                     />
@@ -82,9 +99,12 @@ export const LoginForm = () => {
               )}
             />
           </div>
-          <FormError message=""/>
-          <FormSuccess message="" />
+
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          
           <Button
+            disabled={isPending}
             type="submit"
             className="w-full"
           >
