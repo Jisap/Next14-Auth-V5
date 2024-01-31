@@ -27,7 +27,7 @@ export default auth((req) => {
     return Response.redirect(new URL("/auth/login", nextUrl));            // redirect para que loguee
   }
 
-  return null;
+  return null; // null implica no hacer nada y dejar entrar en la ruta
 })
 
 // Todas las rutas que coincidan con el matcher pasaran por auth, con excepción de los archivos estáticos de next
