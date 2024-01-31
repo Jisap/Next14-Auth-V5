@@ -28,4 +28,4 @@ export const apiAuthPrefix = "/api/auth";
  * Redireccionamiento por defecto despues del logging in
  * @type {string}
 */
-export const DEFAULT_LOGIN_REDIRECT = "settings";
+export const DEFAULT_LOGIN_REDIRECT = "/settings";
