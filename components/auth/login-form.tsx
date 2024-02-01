@@ -19,10 +19,13 @@ import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 
 export const LoginForm = () => {
 
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl")
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string |undefined>("")
   const [isPending, startTransition] = useTransition();
@@ -40,10 +43,16 @@ export const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values)
+      login(values, callbackUrl)
         .then((data) => {
-          setError(data.error)
-          setSuccess(data.success)
+          if(data?.error){
+            form.reset();
+            setError(data.error)
+          }
+          if(data?.success){
+            form.reset();
+            setSuccess(data.success)
+          }
         })
     })
   };
