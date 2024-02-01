@@ -19,7 +19,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
         session.user.id = token.sub      // definimos el user de la session con el del token. 
       }
       if( token.role && session.user){   
-        session.user.role = token.role as UserRole;  // definimosel user.role de la session con el del token 
+        session.user.role = token.role as UserRole;  // definimos el user.role de la session con el del token 
       }
       return session
     },
