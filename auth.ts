@@ -1,8 +1,11 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session, User } from "next-auth"
 import authConfig from "@/auth.config"
 import { PrismaAdapter } from "@auth/prisma-adapter" 
 import { db } from "./lib/db"
 import { getUserById } from "./data/user"
+import { UserRole } from "@prisma/client"
+
+
 
 
 export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
@@ -16,7 +19,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
         session.user.id = token.sub      // definimos el user de la session con el del token. 
       }
       if( token.role && session.user){   
-        session.user.role = token.role   // definimosel user.role de la session con el del token 
+        session.user.role = token.role as UserRole;  // definimosel user.role de la session con el del token 
       }
       return session
     },
