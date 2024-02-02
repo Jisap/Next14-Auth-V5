@@ -10,6 +10,11 @@ import { UserRole } from "@prisma/client"
 
 export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
 
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+
   events:{
     async linkAccount({ user }) { // se dispara cuando un usuario inicia sesión y vincula su cuenta existente con otra estrategia de inicio de sesión: google o github
       await db.user.update({      // Aquí se esta actualizano la propiedad emailVerified en la base de datos cuando se vincula una cuenta.
