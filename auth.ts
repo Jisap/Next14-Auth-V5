@@ -33,6 +33,17 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
     //   }
     //   return true
     // },
+
+    async signIn({ user, account }){
+      
+      if (account?.provider !== "credentials") return true;   // Permite OAuth login sin email verification
+
+      const existingUser = await getUserById(user.id);
+
+      if (!existingUser?.emailVerified) return false;         // No permite signIn sin email verification
+
+      return true
+    },
     
     async session({ token, session }) {  // La session se configura con el token creado despues del signIn
       console.log({

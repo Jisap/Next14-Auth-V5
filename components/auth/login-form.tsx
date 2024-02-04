@@ -50,9 +50,8 @@ export const LoginForm = () => {
     startTransition(() => {
       login(values)
         .then((data) => {
-          setError(data?.error)
-          // TODO: Add when we add 2FA
-          //setSucces(data?.success)
+          setError(data?.error);
+          setSuccess(data?.success);        // Si se envió el email de confirmación y se generó el token de verificación
         })
     })
   };
@@ -94,7 +93,7 @@ export const LoginForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
