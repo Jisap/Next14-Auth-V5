@@ -23,7 +23,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 
-export const LoginForm = () => {
+export const ResetForm = () => {
 
   const searchParams = useSearchParams();   // Si hay un error en el login con github o google en los params se incluira un error                      
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
@@ -59,9 +59,9 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Dont have an account ?"
-      backButtonHref="/auth/register"
+      headerLabel="Forgot your password?"
+      backButtonLabel="Back to login"
+      backButtonHref="/auth/login"
       showSocial
     >
       {/* Se utiliza el componente Form de shadcn al cual se le pasa la configuración de form de react-hook-form */}
