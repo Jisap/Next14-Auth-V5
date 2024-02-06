@@ -12,23 +12,16 @@ import {
 import { CardWrapper } from "./card-wrapper";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { LoginSchema } from "@/schemas";
+import { LoginSchema, ResetSchema } from "@/schemas";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { reset } from "@/actions/reset";
 
 
 export const ResetForm = () => {
-
-  const searchParams = useSearchParams();   // Si hay un error en el login con github o google en los params se incluira un error                      
-  const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
-    ? "Email already in use with different provider!"
-    : "";
 
   //const callbackUrl = searchParams.get("callbackUrl");
 
@@ -36,20 +29,19 @@ export const ResetForm = () => {
   const [success, setSuccess] = useState<string |undefined>("")
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof LoginSchema>>({ // Se utiliza useForm de react-hook-form para inicializar el formulario. 
-    resolver: zodResolver(LoginSchema),               // Se proporciona el esquema de validación (LoginSchema) 
+  const form = useForm<z.infer<typeof ResetSchema>>({ // Se utiliza useForm de react-hook-form para inicializar el formulario. 
+    resolver: zodResolver(ResetSchema),               // Se proporciona el esquema de validación (LoginSchema) 
     defaultValues: {                                  // y los valores predeterminados para los campos del formulario (email y password).
       email: "",
-      password: "",
     }
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      login(values)
+      reset(values)
         .then((data) => {
           setError(data?.error);
           setSuccess(data?.success);        // Si se envió el email de confirmación y se generó el token de verificación
@@ -62,7 +54,6 @@ export const ResetForm = () => {
       headerLabel="Forgot your password?"
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
-      showSocial
     >
       {/* Se utiliza el componente Form de shadcn al cual se le pasa la configuración de form de react-hook-form */}
       <Form {...form}> 
@@ -89,37 +80,9 @@ export const ResetForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="*******"
-                      type="password"
-                    />
-                  </FormControl>
-                  <Button
-                    size="sm"
-                    variant="link"
-                    asChild
-                    className="px-0 font-normal"
-                  >
-                    <Link href="/auth/reset">
-                      Forgot password ?
-                    </Link>
-                  </Button>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
 
-          <FormError message={ error || urlError } />
+          <FormError message={ error } />
           <FormSuccess message={success} />
           
           <Button
@@ -127,7 +90,7 @@ export const ResetForm = () => {
             type="submit"
             className="w-full"
           >
-            Login
+            Send Reset email
           </Button>
         </form>
       </Form>
