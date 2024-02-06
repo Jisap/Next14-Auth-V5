@@ -23,7 +23,7 @@ export const reset = async(values: z.infer<typeof ResetSchema>) => {
   }
 
   const passwordResetToken = await generatePasswordResetToken(email); // Crea una nueva entrada en la tabla con el token renovado
-  await sendPasswordResetEmail(                                       // Se envia un email -> link -> auth/reset
+  await sendPasswordResetEmail(                                       // Se envia un email -> link -> auth/new-password
     passwordResetToken.email,
     passwordResetToken.token,
   );

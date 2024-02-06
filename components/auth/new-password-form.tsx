@@ -12,36 +12,40 @@ import {
 import { CardWrapper } from "./card-wrapper";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { LoginSchema, ResetSchema } from "@/schemas";
+import { NewPasswordSchema } from "@/schemas";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { useState, useTransition } from "react";
 import { reset } from "@/actions/reset";
+import { useSearchParams } from "next/navigation";
+import { newPassword } from "@/actions/new-password";
 
 
-export const ResetForm = () => {
+export const NewPasswordForm = () => {
 
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   //const callbackUrl = searchParams.get("callbackUrl");
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string |undefined>("")
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof ResetSchema>>({ // Se utiliza useForm de react-hook-form para inicializar el formulario. 
-    resolver: zodResolver(ResetSchema),               // Se proporciona el esquema de validación (ResetSchema) 
-    defaultValues: {                                  // y los valores predeterminados para el campo del formulario (email).
-      email: "",
+  const form = useForm<z.infer<typeof NewPasswordSchema>>({ // Se utiliza useForm de react-hook-form para inicializar el formulario. 
+    resolver: zodResolver(NewPasswordSchema),               // Se proporciona el esquema de validación (NewPasswordSchema) 
+    defaultValues: {                                        // y los valores predeterminados para el campo del formulario (password).
+      password: "",
     }
   });
 
-  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      reset(values)
+      newPassword(values, token)
         .then((data) => {
           setError(data?.error);
           setSuccess(data?.success);        // Si se envió el email de confirmación y se generó el token de verificación
@@ -51,7 +55,7 @@ export const ResetForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Forgot your password?"
+      headerLabel="Enter a new password"
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
     >
@@ -64,16 +68,16 @@ export const ResetForm = () => {
           <div className="space-y-4">
             <FormField 
               control={form.control}
-              name="email"
+              name="password"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input 
                       {...field}
                       disabled={isPending}
-                      placeholder="email@example.com"
-                      type="email"
+                      placeholder="*****"
+                      type="password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,7 +94,7 @@ export const ResetForm = () => {
             type="submit"
             className="w-full"
           >
-            Send Reset email
+            Reset password
           </Button>
         </form>
       </Form>
