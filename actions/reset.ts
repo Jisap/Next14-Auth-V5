@@ -3,6 +3,8 @@
 import * as z from "zod";
 import { getUserByEmail } from "@/data/user";
 import { ResetSchema } from "@/schemas";
+import { sendPasswordResetEmail } from "@/lib/mail";
+import { generatePasswordResetToken } from "@/lib/tokens";
 
 export const reset = async(values: z.infer<typeof ResetSchema>) => {
 
@@ -20,7 +22,11 @@ export const reset = async(values: z.infer<typeof ResetSchema>) => {
     return {error: "Email not found!"}
   }
 
-  // TODO: Generate token & send email
+  const passwordResetToken = await generatePasswordResetToken(email); // Crea una nueva entrada en la tabla con el token renovado
+  await sendPasswordResetEmail(                                       // Se envia un email -> link -> auth/reset
+    passwordResetToken.email,
+    passwordResetToken.token,
+  );
 
   return { success: "Reset email sent"}
 }
