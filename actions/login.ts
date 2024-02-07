@@ -2,8 +2,8 @@
 
 import { signIn } from "@/auth";
 import { getUserByEmail } from "@/data/user";
-import { sendVerificationEmail } from "@/lib/mail";
-import { generateVerificationToken } from "@/lib/tokens";
+import { sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/mail";
+import { generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas"
 import { AuthError } from "next-auth";
@@ -36,6 +36,18 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     );
 
     return { success: "Confirmation email sent!" };
+  }
+
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {                        // Si el usuario habilitó el twoFactor y existe el email
+
+    const twoFactorToken = await generateTwoFactorToken(existingUser.email);          // Crea un nuevo objeto twoFactorToken con los nuevos datos
+    await sendTwoFactorTokenEmail(                                                    // y se envía por email el token contenido dentro del este.
+      twoFactorToken.email,
+      twoFactorToken.token  
+    );
+
+    return { twoFactor: true } // Este objeto se usará en el frontend 
+  
   }
 
   try {
