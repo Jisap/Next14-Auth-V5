@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "./lib/db"
 import { getUserById } from "./data/user"
 import { UserRole } from "@prisma/client"
+import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation"
 
 
 
@@ -41,6 +42,16 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
       const existingUser = await getUserById(user.id);
 
       if (!existingUser?.emailVerified) return false;         // No permite signIn sin email verification
+
+      if (existingUser.isTwoFactorEnabled) {                  // Si esta habilitado el twoFactor se habrá creado mediante el link en el email el objeto twoFactorConfirmation
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);  // Lo obtenemos
+
+        if (!twoFactorConfirmation) return false;             // Sino existe false y paramos el login
+
+        await db.twoFactorConfirmation.delete({               // Si si existe borramos el objeto para los próximo signIn
+          where: { id: twoFactorConfirmation.id }
+        });
+      }
 
       return true
     },
