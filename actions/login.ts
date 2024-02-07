@@ -1,6 +1,7 @@
 "use server"
 
 import { signIn } from "@/auth";
+import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { getUserByEmail } from "@/data/user";
 import { sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/mail";
 import { generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens";
@@ -18,11 +19,12 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     return { error: "Invalid fields"}
   }
 
-  const { email, password } = validatedFields.data;                                 // Extraemos valores validados
+  const { email, password, code } = validatedFields.data;                           // Extraemos valores validados
 
   const existingUser = await getUserByEmail(email);                                 // Determinamos si existe el usuario en bd
 
   if (!existingUser || !existingUser.email || !existingUser.password) {             // Si no existe error
+    
     return { error: "Email does not exist!" }
   }
 
@@ -38,13 +40,18 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     return { success: "Confirmation email sent!" };
   }
 
-  if (existingUser.isTwoFactorEnabled && existingUser.email) {                        // Si el usuario habilitó el twoFactor y existe el email
-
-    const twoFactorToken = await generateTwoFactorToken(existingUser.email);          // Crea un nuevo objeto twoFactorToken con los nuevos datos
-    await sendTwoFactorTokenEmail(                                                    // y se envía por email el token contenido dentro del este.
-      twoFactorToken.email,
-      twoFactorToken.token  
-    );
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {                         // Si el usuario habilitó el twoFactor y existe el email
+    if (code) {                                                                        // y se introdujo el código  
+      const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)        // se verifica 
+        
+                                                                 
+    } else {                                                                           // sino  
+      const twoFactorToken = await generateTwoFactorToken(existingUser.email);         // se crea un nuevo objeto twoFactorToken con los nuevos datos
+      await sendTwoFactorTokenEmail(                                                   // y se envía por email el token contenido dentro del este.
+        twoFactorToken.email,
+        twoFactorToken.token  
+      );
+    }
 
     return { twoFactor: true } // Este objeto se usará en el frontend 
   
