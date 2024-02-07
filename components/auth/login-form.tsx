@@ -162,7 +162,7 @@ export const LoginForm = () => {
             type="submit"
             className="w-full"
           >
-            Login
+            {showTwoFactor ? "Confirm" : "Login"}
           </Button>
         </form>
       </Form>
