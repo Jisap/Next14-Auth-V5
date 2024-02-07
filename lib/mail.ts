@@ -32,7 +32,7 @@ export const sendPasswordResetEmail = async (
   });
 };
 
-export const sendTwoFactorTokenEmail = async (
+export const sendTwoFactorTokenEmail = async ( // Solo se envía el token 
   email: string,
   token: string
 ) => {
