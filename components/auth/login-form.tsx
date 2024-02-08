@@ -42,6 +42,7 @@ export const LoginForm = () => {
     defaultValues: {                                  // y los valores predeterminados para los campos del formulario (email y password).
       email: "",
       password: "",
+      code: ""
     }
   });
 
@@ -60,7 +61,7 @@ export const LoginForm = () => {
             form.reset()
             setSuccess(data.success);        // Si se envió el email de confirmación y se generó el token de verificación
           }
-          if(data?.twoFactor){
+          if(data?.twoFactor){               // Si el twoFactor esta habilitado -> showTwoFactor = true -> cambio en el formulario que se muestra  
             setShowTwoFactor(true);
           }
         })
@@ -82,7 +83,7 @@ export const LoginForm = () => {
           className="space-y-6"  
         >
           <div className="space-y-4">
-            {showTwoFactor && (
+            {showTwoFactor && (                     //Si twoFactor esta habilitado se muestra solo el input del código
               <FormField
                 control={form.control}
                 name="code"
@@ -101,7 +102,7 @@ export const LoginForm = () => {
                 )}
               />  
             )}
-            { !showTwoFactor && (
+            { !showTwoFactor && (                    // Si twoFactor no esta habilitado se muestra los inputs el login normal
                 <>
                   <FormField 
                     control={form.control}

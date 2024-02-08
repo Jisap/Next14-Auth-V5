@@ -43,7 +43,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
 
       if (!existingUser?.emailVerified) return false;         // No permite signIn sin email verification
 
-      if (existingUser.isTwoFactorEnabled) {                  // Si esta habilitado el twoFactor se habrá creado mediante el link en el email el objeto twoFactorConfirmation
+      if (existingUser.isTwoFactorEnabled) {                  // Si esta habilitado el twoFactor se habrá creado el objeto twoFactorConfirmation según esquema
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);  // Lo obtenemos
 
         if (!twoFactorConfirmation) return false;             // Sino existe false y paramos el login
