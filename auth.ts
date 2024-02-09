@@ -26,14 +26,6 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
   },
 
   callbacks: {  
-    
-    // async signIn({ user }) {
-    //   const existingUser = await getUserById(user.id);
-    //   if(!existingUser || !existingUser.emailVerified){
-    //     return false;
-    //   }
-    //   return true
-    // },
 
     async signIn({ user, account }){
       
