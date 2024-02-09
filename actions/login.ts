@@ -45,7 +45,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   if (existingUser.isTwoFactorEnabled && existingUser.email) {                         // Si el usuario habilitó el twoFactor y existe el email
     if (code) {                                                                        // y se introdujo el código  
       const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)        // se verifica 
-       console.log('twoFactorToken:', twoFactorToken)
+      
       if(!twoFactorToken){
         return{ error: "Invalid code!" }                                                           // 1º si existe
       }
@@ -99,7 +99,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     })
   
   } catch (error) {
-    console.log(error)
     if(error instanceof AuthError){
       switch (error.type){
         case "CredentialsSignin":

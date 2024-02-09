@@ -43,7 +43,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
 
       if (!existingUser?.emailVerified) return false;         // No permite signIn sin email verification
 
-      if (existingUser.isTwoFactorEnabled) {                  // Si esta habilitado el twoFactor se habrá creado el objeto twoFactorConfirmation según esquema
+      if (existingUser.isTwoFactorEnabled) {                  // Si esta habilitado el twoFactor se habrá creado el objeto twoFactorConfirmation según la action login
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);  // Lo obtenemos
 
         if (!twoFactorConfirmation) return false;             // Sino existe false y paramos el login
@@ -57,9 +57,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
     },
     
     async session({ token, session }) {  // La session se configura con el token creado despues del signIn
-      console.log({
-        sessionToken: token
-      })
+      
       if(token.sub && session.user){ 
         session.user.id = token.sub                       // definimos el user de la session con el del token. 
       }
