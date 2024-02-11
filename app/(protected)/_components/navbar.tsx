@@ -12,6 +12,7 @@ const Navbar = () => {
   return (
     <nav className="bg-secondary flex flex-col xl:flex-row xl:justify-between items-center p-4 rounded-xl md:w-[300px] xl:w-[600px] shadow-sm transition-all">
       <div className="flex flex-col gap-y-2  xl:flex-row gap-x-2">
+        
         <Button
           asChild
           variant={pathname === "/admin" ? "default" : "outline"}
@@ -20,6 +21,7 @@ const Navbar = () => {
             Admin
           </Link>
         </Button>
+
         <Button
           asChild
           variant={pathname === "/client" ? "default" : "outline"}
@@ -28,6 +30,7 @@ const Navbar = () => {
             Client
           </Link>
         </Button>
+
         <Button
           asChild
           variant={pathname === "/server" ? "default" : "outline"}
@@ -36,6 +39,7 @@ const Navbar = () => {
             Server
           </Link>
         </Button>
+
         <Button
           asChild
           variant={pathname === "/settings" ? "default" : "outline"}
@@ -44,6 +48,7 @@ const Navbar = () => {
             Settings
           </Link>
         </Button>
+        
       </div>
       <UserButton />
     </nav>

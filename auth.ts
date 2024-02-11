@@ -56,6 +56,9 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
       if( token.role && session.user){   
         session.user.role = token.role as UserRole;       // definimos el user.role de la session con el del token 
       }
+      if( session.user ){
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
       return session
     },
     
@@ -67,7 +70,8 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
 
       if(!existingUser) return token;
 
-      token.role = existingUser.role; // Introducimos en el token la prop del role
+      token.role = existingUser.role;                               // Introducimos en el token la prop del role
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled    // introducimos en el token la prop del isTwoFactorEnabled
 
       return token
     }
