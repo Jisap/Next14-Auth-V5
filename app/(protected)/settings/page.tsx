@@ -20,7 +20,8 @@ import { useSession } from "next-auth/react";
 import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { useCurrentUser } from "@/hooks/use-current-user";
-
+import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/form-error";
 
 
 const SettingsPage = () => {
@@ -88,7 +89,14 @@ const SettingsPage = () => {
                 )}
               />
             </div>
-            <Button type="submit">
+
+            <FormError message={error} />
+            <FormSuccess message={success} />
+
+            <Button 
+              type="submit"
+              disabled={isPending}    
+            >
               Save
             </Button>
           </form>
