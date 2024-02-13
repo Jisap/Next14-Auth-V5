@@ -34,3 +34,7 @@ export const NewPasswordSchema = z.object({
   }),
 });
 
+export const SettingsSchema = z.object({
+  name: z.optional(z.string())
+});
+
