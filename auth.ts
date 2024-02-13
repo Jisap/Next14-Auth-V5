@@ -5,6 +5,7 @@ import { db } from "./lib/db"
 import { getUserById } from "./data/user"
 import { UserRole } from "@prisma/client"
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation"
+import { getAccountByUserId } from "./data/account"
 
 
 
@@ -48,7 +49,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
       return true
     },
     
-    async session({ token, session }) {  // La session se configura con el token creado despues del signIn
+    async session({ token, session }) {  // La session se configura con el token creado despues del signIn, o despues de su aceso o actualización
       
       if(token.sub && session.user){ 
         session.user.id = token.sub                       // definimos el user de la session con el del token. 
@@ -59,17 +60,29 @@ export const { handlers: { GET, POST }, auth, signIn, signOut} = NextAuth({
       if( session.user ){
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       }
+
+      if(session.user){
+        session.user.name = token.name;                    // Si hay cambios en el token por actualización de name o email
+        session.user.email = token.email;                  // actualizamos la session con dichos name o email 
+        session.user.isOauth = token.isOauth as boolean;   // También se actualiza la prop isOauth si se logeo con google o github 
+      }
+
       return session
     },
     
-    async jwt({ token }) {               // Tras efectuar un signIn se crea un token jwt
+    async jwt({ token }) {    // Tras efectuar un signIn se crea un token jwt. también se accede a este punto cada vez que se accede o actualiza la session
       
       if(!token.sub) return token;
 
-      const existingUser = await getUserById(token.sub);
+      const existingUser = await getUserById(token.sub);            // Obtenemos el usuario de la bd
 
       if(!existingUser) return token;
 
+      const existingAccount = await getAccountByUserId( existingUser.id )
+
+      token.isOauth= !!existingAccount                              // Introducimos en el token la prop isOauth si existe la cuenta de google o github
+      token.name = existingUser.name                                // Introducimos en el token la prop del name del signIn o de la actualización en bd realizada en settings   
+      token.email = existingUser.email                              // Idem email
       token.role = existingUser.role;                               // Introducimos en el token la prop del role
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled    // introducimos en el token la prop del isTwoFactorEnabled
 
