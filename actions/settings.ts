@@ -8,6 +8,7 @@ import { generateVerificationToken } from "@/lib/tokens";
 import { SettingsSchema } from "@/schemas";
 import * as z from "zod";
 import bcrypt from "bcryptjs";
+import { update } from "@/auth";
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 
@@ -67,12 +68,22 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     values.newPassword = undefined;
   }
 
-  await db.user.update({                                          // Actualizamos bd
+  const updatedUser = await db.user.update({                      // Actualizamos bd
     where: {id: dbUser.id},
     data: {
       ...values
     }
   });
+
+  update({                                                        // Actualizamos session -> jwt -> session
+    user: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isTwoFactorEnabled: updatedUser.isTwoFactorEnabled,
+      role: updatedUser.role, 
+
+    }
+  })
 
   return { success: "Settings Updated!" }
 
