@@ -20,6 +20,13 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     return { error: "Unauthorized" }
   }
 
+  if(user.isOauth){
+    values.email = undefined;
+    values.password = undefined;
+    values.newPassword = undefined;
+    values.isTwoFactorEnabled = undefined;
+  }
+
   await db.user.update({
     where: {id: dbUser.id},
     data: {

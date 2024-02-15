@@ -41,7 +41,7 @@ const SettingsPage = () => {
   const [success, setSuccess] = useState<string | undefined>();
 
   const { update } = useSession()
-  const[isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
@@ -60,14 +60,14 @@ const SettingsPage = () => {
     startTransition(() => { // Hasta que la action no termine useTransition devuelve isPending y no se actualiza la interfaz de usuario
       settings(values)
         .then((data) => {
-          if(data.error){
+          if (data.error) {
             setError(data.error)
           }
-          if(data.success){
+          if (data.success) {
             update(); // Actualizamos la session del usuario logueado -> jwt -> session
             setSuccess(data.success)
           }
-      })
+        })
         .catch(() => setError("Something went wrong"))
     })
   }
@@ -81,19 +81,19 @@ const SettingsPage = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form 
+          <form
             className="space-y-6"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="space-y-4">
-              <FormField 
+              <FormField
                 control={form.control}
                 name="name"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         {...field}
                         placeholder="John Doe"
                         disabled={isPending}
@@ -103,60 +103,64 @@ const SettingsPage = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="johnDoe@example.com"
-                        type="email"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="*****"
-                        type="password"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>New Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="*****"
-                        type="password"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {user?.isOauth === false && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="johnDoe@example.com"
+                            type="email"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="*****"
+                            type="password"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="*****"
+                            type="password"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               <FormField
                 control={form.control}
                 name="role"
@@ -186,14 +190,35 @@ const SettingsPage = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="isTwoFactorEnabled"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Two Factor Authentication</FormLabel>
+                      <FormDescription>
+                        Enable two factor authentication for your account
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        disabled={isPending}
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </div>
 
             <FormError message={error} />
             <FormSuccess message={success} />
 
-            <Button 
+            <Button
               type="submit"
-              disabled={isPending}    
+              disabled={isPending}
             >
               Save
             </Button>
